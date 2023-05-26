@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha cypress/integration/**/*.js"
+    "test": "mocha cypress/integration/@REST_PROD_AccuWheather.spec.js"
+    "test": "mocha cypress/integration/@REST_PROD_Authorize.NET.spec.js"
+    "test": "mocha cypress/integration/@REST_PROD_BOX.spec.js"
+    "test": "mocha cypress/integration/TC_PW_Sanity.spec.js"
   },
   "keywords": [],
   "author": "",
