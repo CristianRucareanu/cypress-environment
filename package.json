@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "mocha"
+    "test": "mocha cypress/integartion/TC_PW_Sanity.spec.js"
   },
   "keywords": [],
   "author": "",
