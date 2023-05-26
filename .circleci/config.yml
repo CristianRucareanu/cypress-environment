@@ -39,7 +39,7 @@ jobs:
       # Run tests
       - run:
           name: Run Mocha Tests
-          command: npm run test -- cypress-environment/cypress/integration/
+          command: npm run test -- cypress/integration/
 
       - run:
           name: Run Cypress Tests
