@@ -39,7 +39,7 @@ jobs:
       # Run tests
       - run:
           name: Run Mocha Tests
-          command: npm run test -- cypress/integration/
+          command: npm run test
 
       - run:
           name: Run Cypress Tests
@@ -51,3 +51,8 @@ jobs:
           destination: test_results
       - store_test_results:
           path: results
+
+workflows:
+  full:
+    jobs:
+      - build
