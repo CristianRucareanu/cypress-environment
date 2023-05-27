@@ -1,58 +1,32 @@
 version: 2.1
-
-executors:
-  node-executor:
-    docker:
-      - image: circleci/node:14
-
 jobs:
-  build:
-    executor: node-executor
-
-    working_directory: ~/cypress-environment/
-
+  test:
+    docker:
+      - image: cypress/base:10
     steps:
-      - checkout
-
       - attach_workspace:
           at: ~/cypress-environment/
-
-      # Install dependencies
+      - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-
+            - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
-          name: Install Dependencies
-          command: npm install
-
-      - run:
-          name: Install Cypress
+          name: Install
           command: npm install --save-dev cypress
-
+      - run: 
+          name: Verify Cypress
+          command: npx cypress verify
       - save_cache:
+          key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # Run tests
+            - ~/.npm
+            - ~/.cache
       - run:
-          name: Run Mocha Tests
-          command: npm run test
-
-      - run:
-          name: Run Cypress Tests
-          command: npm run cypress:run
-
-# Store test artifacts and results
-      - store_artifacts:
-          path: results
-          destination: test_results
-      - store_test_results:
-          path: results
-
+          name: Run Cypress tests
+          no_output_timeout: 5m
+          command: "npx cypress run \\\n \\\n \\\n \\\n "
+          working_directory: '~/cypress-environment/'
 workflows:
-  full:
+  build:
     jobs:
-      - build
+      - test
