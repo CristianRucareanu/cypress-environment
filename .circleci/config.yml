@@ -25,7 +25,7 @@ jobs:
           name: Run Cypress tests
           no_output_timeout: 5m
           command: "npx cypress run \\\n \\\n \\\n \\\n "
-          working_directory: '~/cypress-environment/'
+          working_directory: ~/cypress-environment/
 workflows:
   build:
     jobs:
