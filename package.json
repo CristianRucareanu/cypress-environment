@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha cypress/integartion/TC_PW_Sanity.spec.js"
+    "test-junit": "cypress run --reporter junit --reporter-options 'mochaFile=junit-results/my-test-output.xml'",
+    "test-multiple": "cypress run --reporter mocha-multi-reporters --reporter-options configFile=config.json"
   },
   "keywords": [],
   "author": "",
