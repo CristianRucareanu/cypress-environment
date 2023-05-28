@@ -1,35 +1,53 @@
-version: 2.1
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
+
+version: 2
 jobs:
-  test:
+  build:
     docker:
       - image: cypress/base:10
+        environment:
+          ## this enables colors in the output
+          TERM: xterm
+    working_directory: ~/cypress-environment/
     steps:
-      - attach_workspace:
-          at: ~/cypress-environment/
       - checkout
-      - restore_cache:
-          keys:
-            - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
-          name: Install
-          command: npm install --save-dev cypress
+          name: Install Dependencies
+          command: npm ci
+          when: always 
       - run:
-          name: Start Application Server
-          command: npm start
-          background: true
-      - run: 
-          name: Verify Cypress
-          command: npx cypress verify
-      - save_cache:
-          key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
+          name: Execute Cypress Tests
+          command: npm run cypress:run
+          when: always   
       - run:
-          name: Run Cypress tests
-          no_output_timeout: 5m
-          command: "npx cypress run \\\n \\\n \\\n \\\n "
-workflows:
-  build:
-    jobs:
-      - test
+          name: Generate Mochawesome Report
+          command: npm run cypress:report 
+          when: always  
+      - run:
+          name: Configure User Email
+          command: git config cristi.cristi.itsirc@gmail.com
+          when: always  
+      - run:
+          name: Configure User Name
+          command: git config CristianRucareanu
+          when: always 
+      - run:
+          name: Update git folder
+          command: git pull
+          when: always
+      - run:
+          name: Add files to index
+          command: ls -la && git add -A
+          when: always
+      - run:
+          name: Commit New files
+          command: git commit -m "[skip ci] test result"
+          when: always
+      - run:
+          name: Push to git
+          command: git push
+          when: always
