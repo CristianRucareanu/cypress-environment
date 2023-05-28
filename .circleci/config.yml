@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       # the Docker image with Cypress dependencies
-      - image: cypress/base:8
+      - image: cypress/base:10
         environment:
           ## this enables colors in the output
           TERM: xterm
@@ -17,9 +17,8 @@ jobs:
             - v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
             - v2-deps-{{ .Branch }}-
             - v2-deps-
-      - run: npm install --frozen-lockfile
-      - run: npm install --save-dev @types/cypress@^1.1.0 enquirer@>=2.3.0 <3
-      - run: npm install --save-dev mocha mocha-multi-reporters mocha-junit-reporter
+      - run: npm ci
+      - run: npm install --save-dev cypress
       - run: npm cache clean --force
       - save_cache:
           key: v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
@@ -28,12 +27,12 @@ jobs:
             - ~/.cache
       - run:
           name: Running E2E tests with JUnit reporter
-          command: cypress run --reporter junit --reporter-options "mochaFile=junit-results/my-test-output.xml"
+          command: npm run test-junit
       - store_test_results:
           path: ~/cypress-environment/junit-results
       - run:
           name: Running E2E tests with multiple reporters
-          command: cypress run --reporter mocha-multi-reporters --reporter-options configFile=config.json
+          command: npm run test-multiple
       - store_test_results:
           path: ~/cypress-environment/multiple-results
       - store_artifacts:
