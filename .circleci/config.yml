@@ -18,6 +18,7 @@ jobs:
             - v2-deps-{{ .Branch }}-
             - v2-deps-
       - run: npm install --frozen-lockfile
+      - run: npm install --save-dev mocha mocha-multi-reporters mocha-junit-reporter
       - run: npm install --save-dev cypress
       - run: npm cache clean --force
       - save_cache:
@@ -27,12 +28,12 @@ jobs:
             - ~/.cache
       - run:
           name: Running E2E tests with JUnit reporter
-          command: npm run test-junit
+          command: cypress run --reporter junit --reporter-options "mochaFile=results/my-test-output.xml"
       - store_test_results:
           path: ~/cypress-environment/junit-results
       - run:
           name: Running E2E tests with multiple reporters
-          command: npm run test-multiple
+          command: cypress run --reporter mocha-multi-reporters --reporter-options configFile=config.json
       - store_test_results:
           path: ~/cypress-environment/multiple-results
       - store_artifacts:
