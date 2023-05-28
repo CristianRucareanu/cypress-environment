@@ -14,14 +14,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
             - v2-deps-{{ .Branch }}-
             - v2-deps-
       - run: npm ci
       - run: npm install --save-dev cypress
       - run: npm cache clean --force
       - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
