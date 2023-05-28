@@ -1,60 +1,39 @@
-workflows:
-  version: 2
-  commit:
-    jobs:
-      - build
-
 version: 2
+
 jobs:
   build:
     docker:
-      - image: cypress/base:10
+      # the Docker image with Cypress dependencies
+      - image: cypress/base:8
         environment:
           ## this enables colors in the output
           TERM: xterm
     working_directory: ~/cypress-environment/
+    parallelism: 1
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "b7:35:a6:4e:9b:0d:6d:d4:78:1e:9a:97:2a:66:6b:be"
       - checkout
+      - restore_cache:
+          keys:
+            - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-deps-{{ .Branch }}-
+            - v2-deps-
+      - run: npm ci
+      - save_cache:
+          key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
       - run:
-          name: Install Dependencies
-          command: npm ci
-          when: always 
-      - run:   
-          name: list files
-          command: pwd && ls -la
-          when: always 
+          name: Running E2E tests with JUnit reporter
+          command: npm run test-junit
+      - store_test_results:
+          path: junit-results
       - run:
-          name: Execute Cypress Tests
-          command: npm run cypress:run
-          when: always   
-      - run:
-          name: Generate Mochawesome Report
-          command: npm run cypress:report 
-          when: always  
-      - run:
-          name: Configure User Email
-          command: git config cristi.cristi.itsirc@gmail.com
-          when: always  
-      - run:
-          name: Configure User Name
-          command: git config CristianRucareanu
-          when: always 
-      - run:
-          name: Update git folder
-          command: git pull
-          when: always
-      - run:
-          name: Add files to index
-          command: ls -la && git add -A
-          when: always
-      - run:
-          name: Commit New files
-          command: git commit -m "[skip ci] test result"
-          when: always
-      - run:
-          name: Push to git
-          command: git push
-          when: always
+          name: Running E2E tests with multiple reporters
+          command: npm run test-multiple
+      - store_test_results:
+          path: multiple-results
+      - store_artifacts:
+          path: cypress/videos
+      - store_artifacts:
+          path: cypress/screenshots
