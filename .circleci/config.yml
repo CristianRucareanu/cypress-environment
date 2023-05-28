@@ -3,10 +3,8 @@ version: 2
 jobs:
   build:
     docker:
-      # the Docker image with Cypress dependencies
       - image: cypress/browsers:node14.16.0-chrome90-ff88
         environment:
-          ## this enables colors in the output
           TERM: xterm
     working_directory: ~/cypress-environment/
     parallelism: 1
@@ -17,8 +15,8 @@ jobs:
             - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - v2-deps-{{ .Branch }}-
             - v2-deps-
-      - run: npm ci
-      - run: npm install --save-dev cypress
+      - run: npm install --frozen-lockfile
+      - run: npm install --save-dev mocha mocha-multi-reporters mocha-junit-reporter
       - run: npm cache clean --force
       - save_cache:
           key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
@@ -29,13 +27,13 @@ jobs:
           name: Running E2E tests with JUnit reporter
           command: npm run test-junit
       - store_test_results:
-          path: ~/cypress-environment/junit-results
+          path: ~/junit-results
       - run:
           name: Running E2E tests with multiple reporters
           command: npm run test-multiple
       - store_test_results:
-          path: ~/cypress-environment/multiple-results
+          path: ~/multiple-results
       - store_artifacts:
-          path: ~/cypress-environment/cypress/videos
+          path: ~/cypress/videos
       - store_artifacts:
-          path: ~/cypress-environment/cypress/screenshots
+          path: ~/cypress/screenshots
