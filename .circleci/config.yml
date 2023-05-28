@@ -29,13 +29,13 @@ jobs:
           name: Running E2E tests with JUnit reporter
           command: npm run test-junit
       - store_test_results:
-          path: junit-results
+          path: ~/cypress-environment/junit-results
       - run:
           name: Running E2E tests with multiple reporters
           command: npm run test-multiple
       - store_test_results:
-          path: multiple-results
+          path: ~/cypress-environment/multiple-results
       - store_artifacts:
-          path: cypress/videos
+          path: ~/cypress-environment/cypress/videos
       - store_artifacts:
-          path: cypress/screenshots
+          path: ~/cypress-environment/cypress/screenshots
