@@ -18,6 +18,8 @@ jobs:
             - v2-deps-{{ .Branch }}-
             - v2-deps-
       - run: npm ci
+      - run: npm install cypress
+      - run: npm cache clean --force
       - save_cache:
           key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
