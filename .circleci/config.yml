@@ -1,0 +1,60 @@
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
+
+version: 2
+jobs:
+  build:
+    docker:
+      - image: cypress/base:10
+        environment:
+          ## this enables colors in the output
+          TERM: xterm
+    working_directory: ~/cypress-environment/
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "b7:35:a6:4e:9b:0d:6d:d4:78:1e:9a:97:2a:66:6b:be"
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm ci
+          when: always 
+      - run:   
+          name: list files
+          command: pwd && ls -la
+          when: always 
+      - run:
+          name: Execute Cypress Tests
+          command: npm run cypress:run
+          when: always   
+      - run:
+          name: Generate Mochawesome Report
+          command: npm run cypress:report 
+          when: always  
+      - run:
+          name: Configure User Email
+          command: git config cristi.cristi.itsirc@gmail.com
+          when: always  
+      - run:
+          name: Configure User Name
+          command: git config CristianRucareanu
+          when: always 
+      - run:
+          name: Update git folder
+          command: git pull
+          when: always
+      - run:
+          name: Add files to index
+          command: ls -la && git add -A
+          when: always
+      - run:
+          name: Commit New files
+          command: git commit -m "[skip ci] test result"
+          when: always
+      - run:
+          name: Push to git
+          command: git push
+          when: always
