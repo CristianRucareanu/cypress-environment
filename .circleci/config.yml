@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       # the Docker image with Cypress dependencies
-      - image: cypress/base:8
+      - image: cypress/browsers:node14.16.0-chrome90-ff88
         environment:
           ## this enables colors in the output
           TERM: xterm
@@ -14,15 +14,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
             - v2-deps-{{ .Branch }}-
             - v2-deps-
       - run: npm i npm@latest
-      - run: npm ci
+      - run: npm install --frozen-lockfile
+      - run: npm install --save-dev mocha mocha-multi-reporters mocha-junit-reporter
       - run: npm install --save-dev cypress
       - run: npm cache clean --force
       - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
@@ -30,13 +31,13 @@ jobs:
           name: Running E2E tests with JUnit reporter
           command: npm run test-junit
       - store_test_results:
-          path: ~/cypress-environment/junit-results
+          path: ~/junit-results
       - run:
           name: Running E2E tests with multiple reporters
-          command: npm run test-multiple
+          command: cypress run --reporter mocha-multi-reporters --reporter-options configFile=config.json
       - store_test_results:
-          path: ~/cypress-environment/multiple-results
+          path: ~/multiple-results
       - store_artifacts:
-          path: ~/cypress-environment/cypress/videos
+          path: ~/cypress/videos
       - store_artifacts:
-          path: ~/cypress-environment/cypress/screenshots
+          path: ~/cypress/screenshots
