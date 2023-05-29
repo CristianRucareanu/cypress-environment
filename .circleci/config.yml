@@ -15,12 +15,11 @@ jobs:
             - v1-deps-{{ .Branch }}
             - v1-deps
       - run:
-          command: npm cache clean --force
-      - run:
           name: Install Dependencies
-          command: npm ci
-      - run:
-          command: npm install cypress@7.5.0
+          command: |
+            npm install --frozen-lockfile
+            npm install cypress@7.5.0
+            $(npm bin)/cypress verify
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
@@ -29,7 +28,7 @@ jobs:
 
   frontend:
     docker:
-      - image: <your-docker-image>
+      - image: cypress/base:8
     steps:
       - checkout
       - run:
@@ -41,13 +40,13 @@ jobs:
 
   test:
     docker:
-      - image: <your-docker-image>
+      - image: cypress/base:8
     steps:
       - checkout
       - run:
           name: Install Dependencies
           command: |
-            npm ci
+            npm install --frozen-lockfile
             npm install wait-on
             npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
             npm start & npx wait-on http://127.0.0.1:8080
