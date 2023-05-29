@@ -16,16 +16,16 @@ jobs:
             - v1-deps
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
+          command: npm ci
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.cache
-      - run: $(yarn bin)/cypress run --record --key <record_key>
+      - run: $(npm bin)/cypress run --record --key <record_key>
 
   frontend:
     docker:
-      - image: <your-docker-image>
+      - image: cypress/base:8
     steps:
       - checkout
       - run:
@@ -37,13 +37,13 @@ jobs:
 
   test:
     docker:
-      - image: <your-docker-image>
+      - image: cypress/base:8
     steps:
       - checkout
       - run:
           name: Install Dependencies
           command: |
-            npm install
+            npm ci
             npm install wait-on
             npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
             npm start & npx wait-on http://127.0.0.1:8080
