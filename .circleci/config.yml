@@ -15,12 +15,14 @@ jobs:
             - v1-deps-{{ .Branch }}
             - v1-deps
       - run:
+          command: npm install -g npm
+      - run:
+          command: npm cache clean --force
+      - run:
           name: Install Dependencies
-          command: |
-            npm install -g npm
-            npm cache clean --force
-            npm install --frozen-lockfile
-            npm install cypress@7.5.0
+          command: npm install --frozen-lockfile
+      - run:
+          command: npm install cypress@7.5.0
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
