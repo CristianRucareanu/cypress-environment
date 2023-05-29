@@ -19,10 +19,8 @@ jobs:
           command: |
             npm install -g npm
             npm cache clean --force
-            rm package-lock.json
             npm install --frozen-lockfile
             npm install cypress@7.5.0
-            $(npm bin)/cypress verify
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
