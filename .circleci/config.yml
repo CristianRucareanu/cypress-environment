@@ -16,10 +16,9 @@ jobs:
             - v1-deps
       - run:
           name: Install Dependencies
-          command: |
-            npm ci
-            npm install cypress@7.5.0
-            $(npm bin)/cypress verify
+          command: npm ci
+      - run:
+          command: npm install cypress@7.5.0
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
