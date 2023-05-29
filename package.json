@@ -4,12 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "test-junit", "test-multiple",
-    "test-junit": "cypress run --reporter junit --reporter-options 'mochaFile=junit-results/my-test-output.xml'",
-    "test-multiple": "cypress run --reporter mocha-multi-reporters --reporter-options configFile=config.json",
-    "build": "test-junit", "test-multiple",
-    "test": "test-junit", "test-multiple",
-    "eject": "test-junit", "test-multiple"
+    "test": "mocha test/**/*.js"
   },
   "keywords": [],
   "author": "",
