@@ -15,8 +15,6 @@ jobs:
             - v1-deps-{{ .Branch }}
             - v1-deps
       - run:
-          command: npm install -g npm
-      - run:
           command: npm cache clean --force
       - run:
           name: Install Dependencies
@@ -61,6 +59,12 @@ jobs:
           name: Merge Reports
           command: |
             npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
+      - store_test_results:
+          path: ~/cypress-environment/multiple-results
+      - store_artifacts:
+          path: ~/cypress-environment/cypress/videos
+      - store_artifacts:
+          path: ~/cypress-environment/cypress/screenshots
 
 workflows:
   version: 2
