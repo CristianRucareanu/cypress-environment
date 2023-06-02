@@ -1,79 +1,30 @@
 version: 2.1
-
+orbs:
+  cypress: cypress-io/cypress@3
 jobs:
-  build:
-    docker:
-      - image: cypress/base:8
-    environment:
-      TERM: xterm
-    working_directory: ~/cypress-environment/
+  install:
+    executor: cypress/default
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-            - v1-deps-{{ .Branch }}
-            - v1-deps
-      - run:
-          command: npm cache clean --force
-      - run:
-          name: Install Dependencies
-          command: npm install --frozen-lockfile
-      - run:
-          command: npm install cypress@7.5.0
-      - save_cache:
-          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+      - cypress/install:
+          install-browsers: true
+      - persist_to_workspace:
+          root: ~/cypress-environment/
           paths:
-            - ~/.cache
-      - run: $(npm bin)/cypress run --record --key <record_key>
-
-  frontend:
-    docker:
-      - image: cypress/base:8
+            - .cache/Cypress
+            - project
+  run-tests:
+    executor: cypress/default
+    parallelism: 10
     steps:
-      - checkout
-      - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Build
-          command: npm run build
-
-  test:
-    docker:
-      - image: cypress/base:8
-    steps:
-      - checkout
-      - run:
-          name: Install Dependencies
-          command: |
-            npm install --frozen-lockfile
-            npm install wait-on
-            npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
-            npm start & npx wait-on http://127.0.0.1:8080
-      - run:
-          name: Run Tests
-          command: |
-            npx cypress run --record --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
-      - run:
-          name: Merge Reports
-          command: |
-            npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
-      - store_test_results:
-          path: ~/cypress-environment/multiple-results
-      - store_artifacts:
-          path: ~/cypress-environment/cypress/videos
-      - store_artifacts:
-          path: ~/cypress-environment/cypress/screenshots
-
+      - run: echo "This step assumes dependencies were installed using the cypress/install job"
+      - attach_workspace:
+          at: ~/cypress-environment/
+      - cypress/run-tests:
+          cypress-command: 'npx cypress run --parallel --record'
+          start-command: 'npm run start'
 workflows:
-  version: 2
-  full:
-    jobs:
-      - build
-      - frontend:
-          requires:
-            - build
-      - test:
-          requires:
-            - frontend
+    version: 2
+    full:
+      jobs:
+      - install
+      - run-tests
