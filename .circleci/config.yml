@@ -8,7 +8,7 @@ jobs:
       - cypress/install:
           install-browsers: true
       - persist_to_workspace:
-          root: ~/
+          root: ~/cypress-environment/
           paths:
             - .cache/Cypress
             - project
