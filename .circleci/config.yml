@@ -18,7 +18,7 @@ jobs:
     steps:
       - run: echo "This step assumes dependencies were installed using the cypress/install job"
       - attach_workspace:
-          at: ~/
+          at: ~/cypress-environment/
       - cypress/run-tests:
           cypress-command: 'npx cypress run --parallel --record'
           start-command: 'npm run start'
