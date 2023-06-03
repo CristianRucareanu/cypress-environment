@@ -4,23 +4,21 @@ orbs:
 jobs:
   build:
     docker:
-      - image: mcr.microsoft.com/dotnet/framework:4.7.2
-
-    working_directory: ~/dissertation-environment/BehavioursIntegrationConnectGOOGLE/
-
+      - image: cimg/node:16.10
+        auth:
+          username: CristiRcr
+          password: $#CT02glcv  # context / project UI env-var reference
     steps:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run: dotnet restore # Restoring NuGet packages
-      
-      - run: dotnet build # Building the project
-      
-      - run: dotnet test # Running tests
+      - run:
+          name: Run tests
+          command: npm test
 
   test:
     docker:
-      - image: mcr.microsoft.com/dotnet/framework:4.7.2
+      - image: cimg/node:current
 
     steps:
       # Start with the initial build
