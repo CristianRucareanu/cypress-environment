@@ -5,6 +5,8 @@ jobs:
   install:
     executor: cypress/default
     steps:
+      - attach_workspace:
+          at: ~/cypress-environment/
       # Install dependencies
       - restore_cache:
           keys:
