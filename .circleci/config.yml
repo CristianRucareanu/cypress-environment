@@ -1,6 +1,8 @@
 version: 2.1
+
 orbs:
   cypress: cypress-io/cypress@3
+
 jobs:
   install:
     executor: cypress/default
@@ -22,6 +24,7 @@ jobs:
           paths:
             - ~/.npm
             - ~/.cache
+
   run-tests:
     executor: cypress/default
     parallelism: 10
@@ -32,10 +35,11 @@ jobs:
       - cypress/run-tests:
           cypress-command: 'npx cypress run --parallel --record'
           start-command: 'npm run start'
+
 workflows:
-    version: 2
-    full:
-      jobs:
+  version: 2
+  full:
+    jobs:
       - install
       - run-tests:
           requires:
