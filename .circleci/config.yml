@@ -1,39 +1,35 @@
-version: 2
-
+version: 2.1
 jobs:
-  build:
+  test:
     docker:
-      - image: cypress/browsers:node14.16.0-chrome90-ff88
-        environment:
-          TERM: xterm
-    working_directory: ~/cypress-environment/
-    parallelism: 1
+      - image: cypress/base:10
     steps:
+      - attach_workspace:
+          at: ~/cypress-environment/
       - checkout
       - restore_cache:
           keys:
-            - v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
-            - v2-deps-{{ .Branch }}-
-            - v2-deps-
-      - run: npm install --frozen-lockfile
-      - run: npm install --save-dev mocha mocha-multi-reporters mocha-junit-reporter
-      - run: npm cache clean --force
+            - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+          name: Install
+          command: npm install --save-dev cypress
+      - run:
+          name: Start Application Server
+          command: npm start
+          background: true
+      - run:
+          name: Verify Cypress
+          command: npx cypress verify
       - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
       - run:
-          name: Running E2E tests with JUnit reporter
-          command: npm run start
-      - store_test_results:
-          path: ~/junit-results
-      - run:
-          name: Running E2E tests with multiple reporters
-          command: npm run start
-      - store_test_results:
-          path: ~/multiple-results
-      - store_artifacts:
-          path: ~/cypress/videos
-      - store_artifacts:
-          path: ~/cypress/screenshots
+          name: Run Cypress tests
+          no_output_timeout: 5m
+          command: npx cypress run
+workflows:
+  build:
+    jobs:
+      - test
