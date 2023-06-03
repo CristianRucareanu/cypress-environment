@@ -1,35 +1,59 @@
 version: 2.1
+orbs:
+  node: circleci/node@5.1.0
 jobs:
+  build:
+    docker:
+      - image: mcr.microsoft.com/dotnet/framework:4.7.2
+
+    working_directory: ~/dissertation-environment/BehavioursIntegrationConnectGOOGLE/
+
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run: dotnet restore # Restoring NuGet packages
+      
+      - run: dotnet build # Building the project
+      
+      - run: dotnet test # Running tests
+
   test:
     docker:
-      - image: cypress/base:10
+      - image: mcr.microsoft.com/dotnet/framework:4.7.2
+
     steps:
+      # Start with the initial build
       - attach_workspace:
-          at: ~/cypress-environment/
-      - checkout
-      - restore_cache:
-          keys:
-            - cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
+          at: ~/dissertation-environment/BehavioursIntegrationConnectGOOGLE/
+
+      # Install Testmo CLI tool
+      - run: npm install --no-save @testmo/testmo-cli
+
+      # Run tests and report results to Testmo
       - run:
-          name: Install
-          command: npm install --save-dev cypress
-      - run:
-          name: Start Application Server
-          command: npm start
-          background: true
-      - run:
-          name: Verify Cypress
-          command: npx cypress verify
-      - save_cache:
-          key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-      - run:
-          name: Run Cypress tests
-          no_output_timeout: 5m
-          command: npx cypress run
+          command: |
+            npx testmo automation:run:submit \
+              --instance "$https://github.com/CristianRucareanu/dissertation-environment.git" \
+              --project-id 1 \
+              --name "C# test run" \
+              --source "unit-tests" \
+              --results results/*.xml \
+              -- npm run csharp-selenium # Note space after --
+
+# Store test artifacts and results
+      - store_artifacts:
+          path: results
+          destination: test_results
+      - store_test_results:
+          path: results
+
 workflows:
-  build:
+  full:
     jobs:
-      - test
+      - build
+      - test:
+          requires:
+            - build
+          context:
+            - testmo
