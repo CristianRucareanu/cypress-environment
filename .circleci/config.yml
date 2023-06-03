@@ -1,57 +1,40 @@
-version: 2
+version: 2.1
 orbs:
   cypress: cypress-io/cypress@3
 jobs:
-  build:
-    working_directory: ~/tmp
-    docker:
-      - image: 'cypress/base:10'
-        environment:
-          TERM: xterm
+  install:
+    executor: cypress/default
     steps:
-      - checkout
-      - run: pwd
-      - run: ls
+      # Install dependencies
       - restore_cache:
           keys:
-            - 'v2-deps-{{ .Branch }}-{{ checksum "package.json" }}'
-            - 'v2-deps-{{ .Branch }}-'
-            - v2-deps-
-      - run: npm ci
-      - save_cache:
-          key: 'v2-deps-{{ .Branch }}-{{ checksum "package.json" }}'
-          paths:
-            - ~/.npm
-            - ~/.cache
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - cypress/install:
+          install-browsers: true
       - persist_to_workspace:
           root: ~/
           paths:
-            - .cache
-            - tmp
-  test:
-    working_directory: ~/tmp
-    docker:
-      - image: 'cypress/base:10'
-        environment:
-          TERM: xterm
+            - .cache/Cypress
+            - project
+  run-tests:
+    executor: cypress/default
+    parallelism: 10
     steps:
+      - run: echo "This step assumes dependencies were installed using the cypress/install job"
       - attach_workspace:
           at: ~/
-      - run: ls -la cypress
-      - run: ls -la cypress/integration
-      - run:
-          name: Running cypress tests
-          command: $(npm bin)/cypress run
-      - store_artifacts:
-          path: cypress/videos
-      - store_artifacts:
-          path: cypress/screenshots
-
+      - cypress/run-tests:
+          cypress-command: 'npx cypress run --parallel --record'
+          start-command: 'npm run start'
 workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      - build
-      - test:
+    version: 2
+    full:
+      jobs:
+      - install
+      - run-tests:
           requires:
-            - build
+            - install
