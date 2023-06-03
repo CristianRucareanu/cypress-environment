@@ -1,57 +1,41 @@
-version: 2.1
-orbs:
-  node: circleci/node@5.1.0
+version: 2
+
 jobs:
   build:
     docker:
-      - image: cimg/node:16.10
-        auth:
-          username: CristiRcr
-          password: $#CT02glcv  # context / project UI env-var reference
+      # the Docker image with Cypress dependencies
+      - image: cypress/base:8
+        environment:
+          ## this enables colors in the output
+          TERM: xterm
+    working_directory: ~/cypress-environment/
+    parallelism: 1
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
+      - restore_cache:
+          keys:
+            - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-deps-{{ .Branch }}-
+            - v2-deps-
+      - run: npm ci
+      - run: npm install --save-dev cypress
+      - run: npm cache clean --force
+      - save_cache:
+          key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
       - run:
-          name: Run tests
-          command: npm test
-
-  test:
-    docker:
-      - image: cimg/node:current
-
-    steps:
-      # Start with the initial build
-      - attach_workspace:
-          at: ~/dissertation-environment/BehavioursIntegrationConnectGOOGLE/
-
-      # Install Testmo CLI tool
-      - run: npm install --no-save @testmo/testmo-cli
-
-      # Run tests and report results to Testmo
-      - run:
-          command: |
-            npx testmo automation:run:submit \
-              --instance "$https://github.com/CristianRucareanu/dissertation-environment.git" \
-              --project-id 1 \
-              --name "C# test run" \
-              --source "unit-tests" \
-              --results results/*.xml \
-              -- npm run csharp-selenium # Note space after --
-
-# Store test artifacts and results
-      - store_artifacts:
-          path: results
-          destination: test_results
+          name: Running E2E tests with JUnit reporter
+          command: npm run test-junit
       - store_test_results:
-          path: results
-
-workflows:
-  full:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
-          context:
-            - testmo
+          path: ~/cypress-environment/junit-results
+      - run:
+          name: Running E2E tests with multiple reporters
+          command: npm run test-multiple
+      - store_test_results:
+          path: ~/cypress-environment/multiple-results
+      - store_artifacts:
+          path: ~/cypress-environment/cypress/videos
+      - store_artifacts:
+          path: ~/cypress-environment/cypress/screenshots
