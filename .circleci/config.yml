@@ -1,41 +1,75 @@
-version: 2
+version: 2.1
 
 jobs:
   build:
     docker:
-      # the Docker image with Cypress dependencies
       - image: cypress/base:8
-        environment:
-          ## this enables colors in the output
-          TERM: xterm
+    environment:
+      TERM: xterm
     working_directory: ~/cypress-environment/
-    parallelism: 1
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v2-deps-{{ .Branch }}-
-            - v2-deps-
-      - run: npm ci
-      - run: npm install --save-dev cypress
-      - run: npm cache clean --force
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run:
+          command: npm install -g npm
+      - run:
+          command: npm cache clean --force
+      - run:
+          name: Install Dependencies
+          command: npm install --frozen-lockfile
+      - run:
+          command: npm install cypress@7.5.0
       - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
-            - ~/.npm
             - ~/.cache
+      - run: $(npm bin)/cypress run --record --key <record_key>
+
+  frontend:
+    docker:
+      - image: cypress/base:8
+    steps:
+      - checkout
       - run:
-          name: Running E2E tests with JUnit reporter
-          command: npm run test-junit
-      - store_test_results:
-          path: ~/cypress-environment/junit-results
+          name: Install Dependencies
+          command: npm install
       - run:
-          name: Running E2E tests with multiple reporters
-          command: npm run test-multiple
-      - store_test_results:
-          path: ~/cypress-environment/multiple-results
-      - store_artifacts:
-          path: ~/cypress-environment/cypress/videos
-      - store_artifacts:
-          path: ~/cypress-environment/cypress/screenshots
+          name: Build
+          command: npm run build
+
+  test:
+    docker:
+      - image: cypress/base:8
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            npm install --frozen-lockfile
+            npm install wait-on
+            npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
+            npm start & npx wait-on http://127.0.0.1:8080
+      - run:
+          name: Run Tests
+          command: |
+            npx cypress run --record --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
+      - run:
+          name: Merge Reports
+          command: |
+            npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
+
+workflows:
+  version: 2
+  full:
+    jobs:
+      - build
+      - frontend:
+          requires:
+            - build
+      - test:
+          requires:
+            - frontend
