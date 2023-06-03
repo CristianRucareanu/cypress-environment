@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  cypress: cypress-io/cypress@1
-
 jobs:
   build:
     docker:
@@ -19,7 +16,10 @@ jobs:
             - v1-deps
       - run:
           name: Install Dependencies
-          command: npm ci
+          command: |
+            npm install --frozen-lockfile
+            npm install cypress@7.5.0
+            $(npm bin)/cypress verify
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Install Dependencies
           command: |
-            npm ci
+            npm install --frozen-lockfile
             npm install wait-on
             npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
             npm start & npx wait-on http://127.0.0.1:8080
