@@ -17,11 +17,11 @@ jobs:
           command: npm install
       - cypress/install:
           install-browsers: true
-      - persist_to_workspace:
-          root: ~/
+      - save_cache:
+          key: cache-{{ arch }}-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
-            - .cache/Cypress
-            - project
+            - ~/.npm
+            - ~/.cache
   run-tests:
     executor: cypress/default
     parallelism: 10
