@@ -15,7 +15,7 @@ jobs:
             - dependencies-
       - run:
           name: Start and test
-          command: npm run ci
+          command: npm run test
       - save_cache:
           paths:
             - ~/.npm
