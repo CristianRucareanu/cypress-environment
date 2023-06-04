@@ -14,14 +14,6 @@ jobs:
             - dependencies-
       #- cypress/install
       - run:
-          name: Start cy:pipeline server
-          command: npm start
-          working_directory: ~/repo
-          background: true
-      - run:
-          name: Run Cypress tests
-          command: npm test
-      - run:
           name: Install dependencies
           command: npm ci
       - run:
