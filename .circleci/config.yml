@@ -1,11 +1,21 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.19.2
+jobs:
+  lerna:
+    executor: cypress/default
+    steps:
+      - run:
+          name: Install lerna
+          command: npm install -g lerna
+
 workflows:
   commit:
     jobs:
       - cypress/install:
           install-command: 'npm install --no-optional --unsafe-perm'
+
+      - lerna
 
       - cypress/run:
           requires:
