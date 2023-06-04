@@ -1,75 +1,14 @@
 version: 2.1
-
-jobs:
-  build:
-    docker:
-      - image: cypress/base:8
-    environment:
-      TERM: xterm
-    working_directory: ~/cypress-environment/
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-            - v1-deps-{{ .Branch }}
-            - v1-deps
-      - run:
-          command: npm install -g npm
-      - run:
-          command: npm cache clean --force
-      - run:
-          name: Install Dependencies
-          command: npm install --frozen-lockfile
-      - run:
-          command: npm install cypress@7.5.0
-      - save_cache:
-          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
-          paths:
-            - ~/.cache
-      - run: $(npm bin)/cypress run --record --key <record_key>
-
-  frontend:
-    docker:
-      - image: cypress/base:8
-    steps:
-      - checkout
-      - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Build
-          command: npm run build
-
-  test:
-    docker:
-      - image: cypress/base:8
-    steps:
-      - checkout
-      - run:
-          name: Install Dependencies
-          command: |
-            npm install --frozen-lockfile
-            npm install wait-on
-            npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
-            npm start & npx wait-on http://127.0.0.1:8080
-      - run:
-          name: Run Tests
-          command: |
-            npx cypress run --record --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
-      - run:
-          name: Merge Reports
-          command: |
-            npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
-
+orbs:
+  cypress: cypress-io/cypress@1.19.2
 workflows:
-  version: 2
-  full:
+  commit:
     jobs:
-      - build
-      - frontend:
+      - cypress/install:
+          install-command: 'npm install --no-optional --unsafe-perm'
+
+      - cypress/run:
           requires:
-            - build
-      - test:
-          requires:
-            - frontend
+            - cypress/install
+          start: 'lerna run start --parallel'
+          install-command: 'npm install --no-optional --unsafe-perm'
