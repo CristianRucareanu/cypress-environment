@@ -15,10 +15,13 @@ workflows:
       - cypress/install:
           install-command: 'npm install --no-optional --unsafe-perm'
 
-      - lerna
+      - lerna:
+         requires:
+            - cypress/install
 
       - cypress/run:
           requires:
             - cypress/install
+            - lerna
           start: 'lerna run start --parallel'
           install-command: 'npm install --no-optional --unsafe-perm'
