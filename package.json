@@ -9,7 +9,7 @@
     "cy:run": "cypress run --headless --record",
     "up": "lerna run start --parallel"
     "start": "cd todomvc; npm start -- --quiet",
-    "test": "cypress run --spec 'cypress/integration/07-ci/*'",
+    "test": "cypress run --spec 'cypress-environment/cypress/integration/*'",
     "ci": "start-test 3000"
   },
   "keywords": [],
