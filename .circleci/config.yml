@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       - image: cypress/base:8
-    working_directory: ~/cypress-environment/ 
+    working_directory: ~/root/
     steps:
       - checkout
       - restore_cache:
