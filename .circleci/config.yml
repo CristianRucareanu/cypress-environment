@@ -1,30 +1,29 @@
 version: 2.1
 orbs:
-  cypress: cypress-io/cypress@1.19.2
+  cypress: cypress-io/cypress@1
 jobs:
-  lerna:
-    executor: cypress/default
+  build:
+    docker:
+      - image: cypress/base:8
+    working_directory: ~/repo
     steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-
+      - cypress/install
       - run:
-          command: npm cache clean --force
+          name: Start cy:pipeline server
+          command: npm start
+          working_directory: ~/repo
+          background: true
       - run:
-          command: npm install minimatch@latest
+          name: Run Cypress tests
+          command: npm test
       - run:
-          name: Install lerna
-          command: npm install -g lerna
-
-workflows:
-  commit:
-    jobs:
-      - cypress/install:
-          install-command: 'npm install --no-optional --unsafe-perm'
-
-      - lerna:
-         requires:
-            - cypress/install
-
-      - cypress/run:
-          requires:
-            - lerna
-          start: 'lerna run start --parallel'
-          install-command: 'npm install --no-optional --unsafe-perm'
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Start and test
+          command: npm run ci
