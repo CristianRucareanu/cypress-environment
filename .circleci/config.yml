@@ -14,9 +14,6 @@ jobs:
             - dependencies-{{ checksum "package.json" }}
             - dependencies-
       - run:
-          name: Install dependencies
-          command: npm ci
-      - run:
           name: Start and test
           command: npm run ci
       - save_cache:
