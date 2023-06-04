@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       - image: cypress/base:8
-    working_directory: ~/repo
+    working_directory: ~/cypress-environment/ 
     steps:
       - checkout
       - restore_cache:
@@ -15,9 +15,9 @@ jobs:
             - dependencies-
       - cypress/install
       - run:
-          name: Start TodoMVC server
+          name: Start cy:pipeline server
           command: npm start
-          working_directory: todomvc
+          working_directory: ~/cypress-environment/
           background: true
       - run:
           name: Run Cypress tests
