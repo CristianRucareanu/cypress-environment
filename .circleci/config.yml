@@ -13,7 +13,6 @@ jobs:
           keys:
             - dependencies-{{ checksum "package.json" }}
             - dependencies-
-      - cypress/install
       - run:
           name: Start cy:pipeline server
           command: npm start
