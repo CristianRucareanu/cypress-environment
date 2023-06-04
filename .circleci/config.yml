@@ -6,6 +6,10 @@ jobs:
     executor: cypress/default
     steps:
       - run:
+          command: npm cache clean --force
+      - run:
+          command: npm install minimatch@latest
+      - run:
           name: Install lerna
           command: npm install -g lerna
 
