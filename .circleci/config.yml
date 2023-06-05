@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       - image: cypress/base:8
-    working_directory: ~/
+    working_directory: $CIRCLE_WORKING_DIRECTORY
     steps:
       - checkout
       - restore_cache:
