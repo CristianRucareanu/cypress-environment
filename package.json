@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tests": "mocha e2e-cypress/cypress/integration/**/*.js",
+    "tests": "mocha cypress/integration/**/*.js",
     "cy:pipeline": "start-server-and-test up http-get://localhost:8080 cy:run",
     "cy:run": "cypress run --headless --record",
     "up": "lerna run start --parallel"
