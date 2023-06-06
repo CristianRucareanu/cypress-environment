@@ -27,8 +27,7 @@ jobs:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.cache
-      - run: $(npm bin)/cypress run --record --key <record_key>
-
+    
   frontend:
     docker:
       - image: cypress/base:8
