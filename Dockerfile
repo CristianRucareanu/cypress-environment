@@ -5,4 +5,3 @@ COPY . .
 RUN npm install
 RUN chown -R node /usr/src/app
 USER node
-CMD ["npm", "run", "test"]
