@@ -9,7 +9,6 @@ jobs:
     working_directory: /temp
     steps:
       - checkout
-
       - run:
           name: Install Dependencies
           command: |
