@@ -10,6 +10,7 @@ jobs:
       - run:
           name: Install Dependencies
           command: |
+            npm install
             npm install wait-on
             npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
       - run:
