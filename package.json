@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tests": "mocha cypress/integration/**/*.js",
+    "start": "mocha cypress/integration/**/*.js",
     "cy:pipeline": "start-server-and-test up http-get://localhost:8080 cy:run",
     "cy:run": "cypress run --headless --record",
     "up": "lerna run start --parallel"
-    "start": "cd todomvc; npm start -- --quiet",
     "test": "cypress run --spec 'cypress-environment/cypress/integration/*'",
     "ci": "start-test 3000"
   },
