@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "mocha cypress/integration/**/*.js",
+    "test:chrome": "cypress run --config pageLoadTimeout=60000,retries=3,defaultCommandTimeout=4000 --browser chrome",
     "cy:pipeline": "start-server-and-test up http-get://localhost:8080 cy:run",
     "cy:run": "cypress run --headless --record",
-    "up": "lerna run start --parallel"
+    "up": "lerna run start --parallel",
     "test": "cypress run --spec 'cypress-environment/cypress/integration/*'",
     "ci": "start-test 3000"
   },
