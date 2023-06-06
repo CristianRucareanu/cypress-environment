@@ -22,24 +22,13 @@ jobs:
           paths:
             - ~/.cache
     
-  frontend:
-    docker:
-      - image: cypress/included:7.5.0
-    steps:
-      - checkout
       - run:
           name: Install Dependencies
           command: npm install
 
-  test:
-    docker:
-      - image: cypress/included:7.5.0
-    steps:
-      - checkout
       - run:
           name: Install Dependencies
           command: |
-            npm install --frozen-lockfile
             npm install wait-on
             npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
             npm start
@@ -57,9 +46,3 @@ workflows:
   full:
     jobs:
       - build
-      - frontend:
-          requires:
-            - build
-      - test:
-          requires:
-            - frontend
