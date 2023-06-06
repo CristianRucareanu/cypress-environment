@@ -13,7 +13,6 @@ jobs:
           command: |
             npm install wait-on
             npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
-            cypress install
       - run:
           name: Run Tests
           command: |
