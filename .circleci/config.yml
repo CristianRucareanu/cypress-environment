@@ -6,7 +6,6 @@ jobs:
       - image: cristircr/e2e:latest
     environment:
       TERM: xterm
-    working_directory: /temp
     steps:
       - checkout
       
