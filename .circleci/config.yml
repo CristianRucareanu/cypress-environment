@@ -17,10 +17,20 @@ jobs:
           name: Run Tests
           command: |
             npx cypress run --record --key 4e2525ba-0b09-41b7-9607-bad2319bc5cd --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
+          environment:
+            MOCHA_FILE: ~/multiple-results/test-results.xml
+          when: always
+      - store_test_results:
+          path: ~/
       - run:
           name: Merge Reports
           command: |
             npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
+          environment:
+            MOCHA_FILE: ~/multiple-results/test-results.xml
+          when: always
+      - store_test_results:
+          path: ~/
 workflows:
   version: 2
   full:
