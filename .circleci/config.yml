@@ -16,7 +16,11 @@ jobs:
       - run:
           name: Run Tests
           command: |
-            npm run start
+            npx cypress run --record --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
+      - run:
+          name: Merge Reports
+          command: |
+            npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
             
 workflows:
   version: 2
