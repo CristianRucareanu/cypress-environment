@@ -15,7 +15,6 @@
     "cypress-xpath": "^2.0.1"
   },
   "run_settings": {
-      "record": true,
-      "projectId": "123abc"
+      "record": true
   }
 }
