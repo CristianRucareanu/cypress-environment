@@ -7,7 +7,6 @@ jobs:
       TERM: xterm
     steps:
       - checkout
-      - run: mkdir ~/e2e
       - run:
           name: Install Dependencies
           command: |
@@ -18,11 +17,8 @@ jobs:
           name: Run Tests
           command: |
             npx cypress run --record --key 4e2525ba-0b09-41b7-9607-bad2319bc5cd --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
-          environment:
-            MOCHA_FILE: ~/e2e/multiple-results/test-results.xml
-          when: always
       - store_test_results:
-          path: ~/e2e
+          path: /multiple-results
       - run:
           name: Merge Reports
           command: |
