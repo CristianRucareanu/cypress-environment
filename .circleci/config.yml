@@ -21,7 +21,6 @@ jobs:
           name: Merge Reports
           command: |
             npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
-            
 workflows:
   version: 2
   full:
