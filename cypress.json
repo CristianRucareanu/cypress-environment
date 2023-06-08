@@ -1,4 +1,7 @@
 {
     "baseUrl": "https://app.perfectforms.com",
-    "chromeWebSecurity": false
+    "chromeWebSecurity": false,
+    "module.exports": {
+        "projectId": "3anoph"
+      }
 }
