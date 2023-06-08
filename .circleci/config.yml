@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Run Tests
           command: |
-            npx cypress run --record --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
+            npx cypress run --record --projectId "123abc" --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"
       - run:
           name: Merge Reports
           command: |
