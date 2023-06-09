@@ -1,39 +1,38 @@
-/// <reference types="cypress" />
+describe('Text box with max charcters', () => {
+    it('dispays the appropiate remaining characters count', () => {
+        cy.visit("http://localhost:3000/example-3");
 
-context('Aliasing', () => {
-  beforeEach(() => {
-    cy.visit('https://example.cypress.io/commands/aliasing')
-  })
+        cy.get('[data-cy="last-name-chars-left-count"]')
+            .as('charsLeftSpan');
+        cy.get('[data-cy="input-last-name"]')
+            .as('charInput');
 
-  it('.as() - alias a DOM element for later use', () => {
-    // https://on.cypress.io/as
+        cy.get('@charsLeftSpan')
+            .invoke('text')
+            .should('equal','15');
 
-    // Alias a DOM element for use later
-    // We don't have to traverse to the element
-    // later in our code, we reference it with @
+        cy.get('@charInput').type('hello');
 
-    cy.get('.as-table').find('tbody>tr')
-      .first().find('td').first()
-      .find('button').as('firstBtn')
+        cy.get('@charsLeftSpan')
+            .invoke('text')
+            .should('equal','10');
 
-    // when we reference the alias, we place an
-    // @ in front of its name
-    cy.get('@firstBtn').click()
+        cy.get('@charInput').type(' my friend');
 
-    cy.get('@firstBtn')
-      .should('have.class', 'btn-success')
-      .and('contain', 'Changed')
-  })
+        cy.get('@charsLeftSpan')
+            .invoke('text')
+            .should('equal','0');
+    });
 
-  it('.as() - alias a route for later use', () => {
-    // Alias the route to wait for its response
-    cy.intercept('GET', '**/comments/*').as('getComment')
+    it('prevents the user from typing more characters one max is exceded', () => {
+        cy.visit('http://localhost:3000/example-3');
 
-    // we have code that gets a comment when
-    // the button is clicked in scripts.js
-    cy.get('.network-btn').click()
+        cy.get('[data-cy="input-last-name"]')
+            .as('charInput');
 
-    // https://on.cypress.io/wait
-    cy.wait('@getComment').its('response.statusCode').should('eq', 200)
-  })
-})
+        cy.get('@charInput').type('abcdefghijklmnopqrstuvwxyz');
+
+        cy.get('@charInput')
+            .should('have.attr', 'value', 'abcdefghijklmno');
+    });
+});

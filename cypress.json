@@ -1,5 +1,4 @@
 {
     "baseUrl": "https://app.perfectforms.com",
-    "chromeWebSecurity": false,
-    "projectId": "3anoph"
+    "chromeWebSecurity": false
 }

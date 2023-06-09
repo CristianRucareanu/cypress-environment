@@ -2,8 +2,5 @@
   "reporterEnabled": "spec, mocha-junit-reporter",
   "mochaJunitReporterReporterOptions": {
     "mochaFile": "multiple-results/results.xml"
-  },
-  "module.exports": {
-    "projectId": "3anoph"
   }
 }
