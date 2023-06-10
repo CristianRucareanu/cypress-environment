@@ -18,8 +18,8 @@ jobs:
           command: |
             npm run start
       - store_artifacts:
-          path: cypress/integration/videos
-          destination: /multiple-results
+          path: cypress/videos
+          destination: multiple-results
 
 workflows:
   version: 2
