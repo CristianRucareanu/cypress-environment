@@ -17,8 +17,18 @@ jobs:
           name: Run Tests
           command: |
             npm run start
-      - store_test_results:
-          path: cypress/integration/multiple-results
+
+      - run:
+          name: Creating Dummy Artifacts
+          command: |
+            echo /videos;
+            mkdir /multiple-results;
+            echo /multiple-results/videos;
+      - store_artifacts:
+          path: /videos
+          destination: /multiple-results
+      - store_artifacts:
+          path: /multiple-results
 
 workflows:
   version: 2
