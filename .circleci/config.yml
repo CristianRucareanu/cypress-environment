@@ -8,8 +8,6 @@ jobs:
     steps:
       - checkout
       - run:
-          command: mkdir multiple-results
-      - run:
           name: Install Dependencies
           command: |
             npm install
