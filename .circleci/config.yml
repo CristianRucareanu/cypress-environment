@@ -66,9 +66,5 @@ workflows:
   full:
     jobs:
       - chrome
-      - firefox:
-          requires:
-            - chrome
-      - edge:
-          requires:
-            - firefox
+      - firefox
+      - edge
