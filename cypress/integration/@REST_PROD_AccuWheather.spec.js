@@ -1,5 +1,5 @@
-describe('@REST_PROD_Authorize.NET', () => {
-    it('@REST_PROD_Authorize.NET', () => {
+describe('@REST_PROD_AccuWheather', () => {
+    it('@REST_PROD_AccuWheather', () => {
         cy.visit("https://app.perfectforms.com/player.htm?f=v7WGggYo");
 
         cy.xpath('/html[1]/body[1]/div[1]/form[1]/div[1]/div[1]/span[2]/input[1]')
