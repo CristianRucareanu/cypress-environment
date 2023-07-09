@@ -17,8 +17,9 @@ jobs:
           name: Run Tests
           command: |
             npm run start
-      - store_test_results:
-          path: /multiple-results
+      - store_artifacts:
+          path: cypress/videos
+          destination: multiple-results
 
 workflows:
   version: 2
