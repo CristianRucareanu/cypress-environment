@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  chrome:
     docker:
       - image: cristircr/e2e:latest
     environment:
@@ -16,7 +16,47 @@ jobs:
       - run:
           name: Run Tests
           command: |
-            npm run start
+            npm run start_chrome
+      - store_artifacts:
+          path: cypress/videos
+          destination: multiple-results
+  firefox:
+    docker:
+      - image: cristircr/e2e:latest
+    environment:
+      TERM: xterm
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            npm install
+            npm install wait-on
+            npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
+      - run:
+          name: Run Tests
+          command: |
+            npm run start_firefox
+      - store_artifacts:
+          path: cypress/videos
+          destination: multiple-results
+  edge:
+    docker:
+      - image: cristircr/e2e:latest
+    environment:
+      TERM: xterm
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: |
+            npm install
+            npm install wait-on
+            npm install mocha mochawesome mochawesome-merge mochawesome-report-generator
+      - run:
+          name: Run Tests
+          command: |
+            npm run start_edge
       - store_artifacts:
           path: cypress/videos
           destination: multiple-results
@@ -25,4 +65,10 @@ workflows:
   version: 2
   full:
     jobs:
-      - build
+      - chrome
+      - firefox:
+          requires:
+            - chrome
+      - edge:
+          requires:
+            - firefox
