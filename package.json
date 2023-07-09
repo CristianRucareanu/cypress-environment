@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cypress run --spec 'cypress/integration/*.js'",
     "start_chrome": "cypress run --spec 'cypress/integration/*.js' --browser chrome",
-    "start_edge": "cypress run --spec 'cypress/integration/*.js' --browser edge",
+    "start_electron": "cypress run --spec 'cypress/integration/*.js' --browser electron",
     "start_firefox": "cypress run --spec 'cypress/integration/*.js' --browser firefox"
   },
   "keywords": [],
